@@ -10,13 +10,25 @@ import com.influxdb.client.write.Point;
 
 import DTO.Result;
 
-public class ResultDAO implements InterfaceDAO{
+public class ResultDAO{
      private static final Logger logger = Logger.getLogger(ResultDAO.class.getName());
     private static InfluxDBClient client;
-    private static final String BUCKET = "result";
+    private static  String BUCKET = null;
+    private static  String HOST = null;
+    private static  char[] TOKEN = null;
+    private static  String ORG = null;
     
+    private static void getProperties(){
+        String[] props = ReaderEnv.readerEnv();
+        BUCKET = props[4];
+        HOST = props[0];
+        TOKEN = props[1].toCharArray();
+        ORG = props[2];
+    }
 
     public static void instantiate(Result result, String user){
+        getProperties();
+        logger.info(BUCKET + HOST + TOKEN.toString() + ORG);
         if (client == null){
             try {
                 client = InfluxDBClientFactory.create(HOST,TOKEN,ORG,BUCKET);
@@ -34,6 +46,8 @@ public class ResultDAO implements InterfaceDAO{
     }
 
     private static void writeData(InfluxDBClient client, Result result, String user){
+        getProperties();
+        logger.info(BUCKET + HOST + TOKEN.toString() + ORG);
         Point point = Point.measurement("result")
             .addTag("user", user)
             .addField("x", result.x())

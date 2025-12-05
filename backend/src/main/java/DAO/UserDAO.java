@@ -19,13 +19,26 @@ import DTO.User;
 import DTO.UserPass;
 import tools.hash.Hasher;
 
-public class UserDAO implements InterfaceDAO{
+public class UserDAO{
     private static final Logger logger = Logger.getLogger(ResultDAO.class.getName());
     private static InfluxDBClient client;
-    private static final String BUCKET = "user";
+    private static  String BUCKET = null;
+    private static  String HOST = null;
+    private static  char[] TOKEN = null;
+    private static  String ORG = null;
+    
+    private static void getProperties(){
+        String[] props = ReaderEnv.readerEnv();
+        BUCKET = props[3];
+        HOST = props[0];
+        TOKEN = props[1].toCharArray();
+        ORG = props[2];
+    }
 
 
     public static void instantiateAddUser(User user){
+        getProperties();
+        logger.info(BUCKET + HOST + TOKEN.toString() + ORG);
         if (client == null){
             try {
                 client = InfluxDBClientFactory.create(HOST,TOKEN,ORG,BUCKET);
@@ -43,6 +56,8 @@ public class UserDAO implements InterfaceDAO{
     }
 
     public static UserPass comparePasswords(User user){
+        getProperties();
+        logger.info(BUCKET + HOST + TOKEN.toString() + ORG);
         logger.info("comparing passwords: begin");
         if (client == null){
             try {
@@ -69,6 +84,8 @@ public class UserDAO implements InterfaceDAO{
     }
 
     public static boolean isUserExists(User user){
+        getProperties();
+        logger.info(BUCKET + HOST + TOKEN.toString() + ORG);
         Boolean rtn = null;
         if (client == null){
             try {
@@ -156,6 +173,8 @@ public class UserDAO implements InterfaceDAO{
     }
 
     public static void deleteUserData(String user) {
+        getProperties();
+        logger.info(BUCKET + HOST + TOKEN.toString() + ORG);
     if (client == null) {
         client = InfluxDBClientFactory.create(HOST, TOKEN, ORG, BUCKET);
     }

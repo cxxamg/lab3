@@ -45,6 +45,16 @@
 
     <build>
         <finalName>backend</finalName>
+        <resources>
+        <resource>
+            <directory>src</directory>
+            <includes>
+                <include>properties.env</include>
+                <include>*.env</include>
+            </includes>
+        </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

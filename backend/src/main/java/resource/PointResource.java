@@ -26,6 +26,7 @@ public class PointResource {
         Result res = Script.run(request);
         if (res != null){
             ResultDAO.instantiate(res, user);
+            //ReaderEnv.readEnv();
             return res;
         }
         return null;

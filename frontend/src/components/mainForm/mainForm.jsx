@@ -20,8 +20,15 @@ export function MainForm({setPoints}){
         const form = formRef.current;
         if (!form) return;
 
+        handleSubmit;
+
+        form.addEventListener("submit", handleSubmit);
+        
+    }, []);
+    
         const handleSubmit = (e) => {
-            console.log("submit"); 
+        console.log("lpo"); 
+
             e.preventDefault(); // предотвращаем стандартную отправку
             const values = getFormValues(formRef.current);
             if (!validateValues(values)) {
@@ -31,12 +38,7 @@ export function MainForm({setPoints}){
             console.log("Форма корректна, отправка возможна");
             const {x, y, r} = values; //деструктуризация
             fetchData(x, y, r);
-
         };
-
-        form.addEventListener("submit", handleSubmit);
-        
-    }, []);
 
     const fetchData = async (x, y, r) => {
         console.log("fetch отправка началась");

@@ -6,7 +6,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 FROM quay.io/wildfly/wildfly:34.0.1.Final-jdk17
-
+COPY --from=build /app/src/properties.env /app/src/properties.env
 COPY --from=build /app/target/backend.war /opt/jboss/wildfly/standalone/deployments/backend.war
 EXPOSE 8080
 
