@@ -1,0 +1,49 @@
+networks:
+  lab3:
+    driver: bridge
+
+services:
+  wildfly:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wildfly
+    ports:
+      - "8080:8080"
+    networks:
+      - lab3
+    environment:
+      - WILDFLY_PASSWORD=admin
+   
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - lab3
+    depends_on:
+      wildfly:
+        condition: service_started
+    restart: unless-stopped
+
+    # compose.yaml
+  influxdb:
+    image: influxdb:2.6
+    container_name: influxdb
+    ports:
+    - "8086:8086"
+    environment:
+    # Настройка начального пользователя, организации и bucket
+    - DOCKER_INFLUXDB_INIT_MODE=setup
+    - DOCKER_INFLUXDB_INIT_USERNAME=admin
+    - DOCKER_INFLUXDB_INIT_PASSWORD=admin1234
+    - DOCKER_INFLUXDB_INIT_ORG=lab3
+    - DOCKER_INFLUXDB_INIT_BUCKET=result
+    volumes:
+    - /Users/aleksandrsokolov/Desktop/influxdb3-data:/var/lib/influxdb2
+    networks:
+    - lab3

@@ -1,0 +1,14 @@
+DAO/ResultDAO.class
+resource/PointResource.class
+tools/HitCheck.class
+JaxRsApplication.class
+DAO/UserDAO.class
+resource/AuthResource.class
+tools/Validation.class
+DTO/Result.class
+models/ResultHistory.class
+DAO/InterfaceDAO.class
+resource/HelloResource.class
+script/Script.class
+DTO/User.class
+tools/Parser.class
