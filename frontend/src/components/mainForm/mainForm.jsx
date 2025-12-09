@@ -6,31 +6,57 @@ import { useStore } from '@tanstack/react-store';
 import { userStore } from "../../js/store/userStore.js";
 
 export function MainForm({setPoints}){
+
     const radiusRef = useRef(null);
     const xRef = useRef(null);
     const yRef = useRef(null);
-    const formRef = useRef(null);
+    //const formRef = useRef(null);
     // const count = useStore(store, state => state.count);
     // const points = useStore(store, state => state.points);
     const { count, points } = useStore(store, state => ({ count: state.count, points: state.points }));
     const user = useStore(userStore, state => ({user: state.user}));
 
+    const Handle = (e) => {
+        e.preventDefault();
+        const element = document.getElementById("main_form");
+        const values = getFormValues(element);
+        const {x, y, r} = values;
+        console.log("adsdds: " + x + y + r);
     
-    useEffect(() => {
-        const form = formRef.current;
-        if (!form) return;
+            if (!validateValues(values)) {
+                console.log("Некорректные данные");
+                return; // не отправляем форму
+            }
+            console.log("Форма корректна, отправка возможна");
+//деструктуризация
+            fetchData(x, y, r);
 
-        handleSubmit;
+    }
 
-        form.addEventListener("submit", handleSubmit);
+  
+    // useEffect(() => {
+    //     if(inputEl){
+    //         //inputEl.focus();
+    //         console.log('element' + inputEl);
+    //     }
         
-    }, []);
+    // }, [inputEl]);
+
+    // useEffect(() => {
+    //     const form = formRef.current;
+    //     if (!form) return;
+
+    //     handleSubmit;
+
+    //     form.addEventListener("submit", handleSubmit);
+        
+    // }, []); <button type="submit">Проверить точку</button>
     
         const handleSubmit = (e) => {
         console.log("lpo"); 
 
             e.preventDefault(); // предотвращаем стандартную отправку
-            const values = getFormValues(formRef.current);
+            const values = getFormValues();
             if (!validateValues(values)) {
                 console.log("Некорректные данные");
                 return; // не отправляем форму
@@ -51,7 +77,7 @@ export function MainForm({setPoints}){
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include' // важно! браузер отправит куки
+            credentials: 'include' // браузер отправит куки
         });
         
         if (!response.ok) {
@@ -62,6 +88,7 @@ export function MainForm({setPoints}){
         console.log(data, " пришел ответ")
         store.setState(prev => ({...prev, count: prev.count + 1}));
         store.setState(prev => ({...prev, points: [...prev.points, data]})); //создается новый обьект а не мутируется старый
+        //points.push(data);  //мутация - ререндер не вызывается
         //setPoints(prev => [...prev, data]); //создается новый массив
         //console.log(count, points);
         } catch (error) {
@@ -75,7 +102,7 @@ export function MainForm({setPoints}){
         <>
     <div className="grid-container">
     <div className="form-container">
-        <form ref={formRef} id="main_form">
+        <form  id="main_form">
             <div className="form-group">
                 <label htmlFor="x">Введите X координату:</label>
                 <input ref={xRef} type="text" id="x" name="x" min="-3" max="5" step="0.0001" required placeholder=" [-3;5]"/>
@@ -93,8 +120,8 @@ export function MainForm({setPoints}){
                 <input ref={radiusRef} type="text" id="radius" name="radius" min="-3" max="3" step="0.0001" required placeholder=" [-3;3]"/>
             </div>
 
+            <button onClick={Handle}>найти</button>
             
-            <button type="submit">Проверить точку</button>
         </form>
     </div>
         <Canvas radiusRef={radiusRef} xRef={xRef} yRef={yRef}/>
