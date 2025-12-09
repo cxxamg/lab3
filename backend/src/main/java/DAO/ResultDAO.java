@@ -38,7 +38,8 @@ public class ResultDAO{
         }
         try {
             writeData(client, result, user);
-            queryData(client);
+            queryLastPoint(client, user);
+            //queryData(client);
         } catch (Exception e) {
             logger.info(e.toString());
         }
@@ -86,4 +87,35 @@ public class ResultDAO{
         }
        
     }
+
+    private static void queryLastPoint(InfluxDBClient client, String targetUser){
+    String fluxRequest = String.format("""
+        from(bucket: "%s")
+          |> range(start: 0)
+          |> filter(fn: (r) => r["_measurement"] == "result")
+          |> filter(fn: (r) => r["user"] == "%s")
+          |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+          |> sort(columns: ["_time"], desc: true)
+          |> limit(n:1)
+    """, BUCKET, targetUser);
+
+    try {
+        QueryApi queryApi = client.getQueryApi();
+        queryApi.query(fluxRequest, (cancellable, record) -> {
+
+            Double x = (Double) record.getValueByKey("x");
+            Double y = (Double) record.getValueByKey("y");
+            Double r = (Double) record.getValueByKey("r");
+            Boolean hit = (Boolean) record.getValueByKey("hit");
+            Double scriptTime = ((Double) record.getValueByKey("scriptTime"));
+            String serverTime = ((String) record.getValueByKey("serverTime"));
+
+            System.out.printf("x=%s y=%s r=%s hit=%s serverTime=%s scriptTime=%s%n",
+                    x, y, r, hit, serverTime, scriptTime);
+        });
+    } catch (Exception e) {
+        logger.info("Ошибка чтения: " + e);
+    }
+}
+
 }

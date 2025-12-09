@@ -12,6 +12,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import script.Script;
+// import jakarta.ejb.EJB;      
+// import beans.ResultHistoryService;  
 
 @Path("/points")
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,12 +21,18 @@ import script.Script;
 public class PointResource {
     private static final Logger logger = Logger.getLogger(PointResource.class.getName());
 
+    // @EJB
+    // private ResultHistoryService historyService;
+
     @GET
     public Result pointResource(@QueryParam("x") String x, @QueryParam("y") String y, @QueryParam("r") String r, @CookieParam("user") String user){
         logger.info("cookie: " + user);
         String[] request = {x,y,r};
         Result res = Script.run(request);
         if (res != null){
+            // historyService.addResultToHistory(res);
+            // System.out.println("stateless session bean: " + historyService.getHistory());
+
             ResultDAO.instantiate(res, user);
             //ReaderEnv.readEnv();
             return res;
