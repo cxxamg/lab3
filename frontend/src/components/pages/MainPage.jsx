@@ -10,7 +10,7 @@ import { userStore } from "../../js/store/userStore";
 export default function MainPage() {
   //const [points, setPoints] = useState([]);  setPoints={setPoints}
   const points = useStore(store, state => state.points);
-  const user = useStore(store, state => state.points);
+  //const user = useStore(store, state => state.points);
 
   useEffect(() => {
     const unsubscribe = store.subscribe(state => { //для каждого поля state отдельное сообщение
